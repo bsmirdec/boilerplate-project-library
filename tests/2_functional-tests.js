@@ -17,39 +17,6 @@ let _idTest;
 let _idWrong = "wrong_id";
 
 suite("Functional Tests", function () {
-  /*
-   * ----[EXAMPLE TEST]----
-   * Each test should completely test the response of the API end-point including response status code!
-   */
-  test("#example Test GET /api/books", function (done) {
-    chai
-      .request(server)
-      .get("/api/books")
-      .end(function (err, res) {
-        assert.equal(res.status, 200);
-        assert.isArray(res.body, "response should be an array");
-        assert.property(
-          res.body[0],
-          "commentcount",
-          "Books in array should contain commentcount"
-        );
-        assert.property(
-          res.body[0],
-          "title",
-          "Books in array should contain title"
-        );
-        assert.property(
-          res.body[0],
-          "_id",
-          "Books in array should contain _id"
-        );
-        done();
-      });
-  });
-  /*
-   * ----[END of EXAMPLE TEST]----
-   */
-
   suite("Routing tests", function () {
     suite(
       "POST /api/books with title => create book object/expect book object",
@@ -189,11 +156,25 @@ suite("Functional Tests", function () {
 
     suite("DELETE /api/books/[id] => delete book object id", function () {
       test("Test DELETE /api/books/[id] with valid id in db", function (done) {
-        done();
+        chai
+          .request(server)
+          .delete("/api/books/" + _idTest)
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, "delete successful");
+            done();
+          });
       });
 
       test("Test DELETE /api/books/[id] with  id not in db", function (done) {
-        done();
+        chai
+          .request(server)
+          .delete("/api/books/" + _idWrong)
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, "no book exists");
+            done();
+          });
       });
     });
   });

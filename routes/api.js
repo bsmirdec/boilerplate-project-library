@@ -19,7 +19,7 @@ module.exports = function (app) {
         const books = await Book.find().lean();
 
         books.forEach((book) => {
-          book["commentcount"] = book.comments.length;
+          book["commentcount"] = book.comments ? book.comments.length : 0;
         });
 
         return res.json(books);
@@ -47,8 +47,13 @@ module.exports = function (app) {
         });
     })
 
-    .delete(function (req, res) {
-      //if successful response will be 'complete delete successful'
+    .delete(async (req, res) => {
+      try {
+        const book = await Book.deleteMany();
+        return res.send("complete delete successful");
+      } catch (err) {
+        return res.send("error in deleting all the books");
+      }
     });
 
   app
@@ -86,8 +91,16 @@ module.exports = function (app) {
       }
     })
 
-    .delete(function (req, res) {
+    .delete(async (req, res) => {
       let bookid = req.params.id;
-      //if successful response will be 'delete successful'
+      try {
+        const book = await Book.findByIdAndDelete(bookid);
+        if (!book) {
+          return res.send("no book exists");
+        }
+        return res.send("delete successful");
+      } catch (err) {
+        return res.send("no book exists");
+      }
     });
 };
