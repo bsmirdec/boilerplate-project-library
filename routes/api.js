@@ -55,9 +55,6 @@ module.exports = function (app) {
     .route("/api/books/:id")
     .get(async (req, res) => {
       let bookid = req.params.id;
-      if (!bookid) {
-        return res.send("missing required field comment");
-      }
       try {
         const book = await Book.findById(bookid);
         if (!book) {
@@ -69,10 +66,24 @@ module.exports = function (app) {
       }
     })
 
-    .post(function (req, res) {
+    .post(async (req, res) => {
       let bookid = req.params.id;
       let comment = req.body.comment;
-      //json res format same as .get
+      if (!comment) {
+        return res.send("missing required field comment");
+      }
+      try {
+        const book = await Book.findById(bookid);
+        if (!book) {
+          return res.send("no book exists");
+        }
+        book.comments.push(comment);
+        console.log(book);
+        await book.save();
+        return res.json(book);
+      } catch (err) {
+        return res.send("no book exists");
+      }
     })
 
     .delete(function (req, res) {

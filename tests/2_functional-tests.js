@@ -141,27 +141,59 @@ suite("Functional Tests", function () {
     suite(
       "POST /api/books/[id] => add comment/expect book object with id",
       function () {
+        const comment = "Un très joli livre";
         test("Test POST /api/books/[id] with comment", function (done) {
-          //done();
+          chai
+            .request(server)
+            .post("/api/books/" + _idTest)
+            .send({ comment: comment })
+            .end(function (err, res) {
+              assert.equal(res.status, 200);
+              assert.property(res.body, "title");
+              assert.property(res.body, "_id");
+              assert.property(res.body, "comments");
+              assert.isArray(res.body.comments);
+              assert.equal(
+                res.body.comments[res.body.comments.length - 1],
+                comment
+              );
+              done();
+            });
         });
 
         test("Test POST /api/books/[id] without comment field", function (done) {
-          //done();
+          chai
+            .request(server)
+            .post("/api/books/" + _idTest)
+            .send({})
+            .end(function (err, res) {
+              assert.equal(res.status, 200);
+              assert.equal(res.text, "missing required field comment");
+              done();
+            });
         });
 
         test("Test POST /api/books/[id] with comment, id not in db", function (done) {
-          //done();
+          chai
+            .request(server)
+            .post("/api/books/" + _idWrong)
+            .send({ comment: comment })
+            .end(function (err, res) {
+              assert.equal(res.status, 200);
+              assert.equal(res.text, "no book exists");
+              done();
+            });
         });
       }
     );
 
     suite("DELETE /api/books/[id] => delete book object id", function () {
       test("Test DELETE /api/books/[id] with valid id in db", function (done) {
-        //done();
+        done();
       });
 
       test("Test DELETE /api/books/[id] with  id not in db", function (done) {
-        //done();
+        done();
       });
     });
   });
