@@ -3,7 +3,7 @@ const { Schema } = mongoose.Schema;
 
 const CommentSchema = new mongoose.Schema({
   book_id: { type: String, required: true },
-  text: { type: String, required: true },
+  text: { type: String },
 });
 
 const Comment = mongoose.model("Comment", CommentSchema);
